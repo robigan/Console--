@@ -1,13 +1,20 @@
 const { Console } = console;
+const { PromptsCompat } = require("./Formating.js");
 
 const assertOptions = (Options) => {
-    Options ?? console.error("Options must be specified");
+    if (!Options && typeof Options === "object") {
+        throw new TypeError("Options cannot be falsy and must be an object");
+    } else if (!Options.std.stdout) {
+        throw new TypeError("Options.std.stdout cannot be falsy");
+    }
     Options.others.forEach((element, index) => {
-        element.stdout ?? console.error(`stdOut for Options.others[${index}] must be specified`);
+        if (!element.stdout) {
+            throw new TypeError(`stdOut for Options.others[${index}] must be specified`);
+        }
     });
 };
 
-class Main extends Console {
+class Main {
     constructor(Options = {
         std: {
             stdout: process.stdout, 
@@ -17,28 +24,63 @@ class Main extends Console {
         others: [
             {
                 stdout: require("fs").createWriteStream(`./logs/${Date.now()}.log`, {flags: "wx"}),
-                enabled: true,
+                name: "fs",
+                enabled: false,
             },
         ],
     }) {
         assertOptions(Options);
-        Options.std ? super(Options.std) : super(process.stdout);
+        //Options.std ? super(Options.std) : super(process.stdout);
+
         this.Options = Options;
+        this.Console = new Console(Options.std);
         this.Consoles = new Map();
-        Options.others.forEach(element => {
-            this.Consoles.set(Math.random(), new Console(element));
+        this.Kleur = new PromptsCompat(this.Console);
+
+        this.Consoles.set(Options.std.name ?? "std", this.Console);
+        Options.others.forEach((element, index) => {
+            if (element.name && this.Consoles.has(element.name)) {
+                throw new SyntaxError("Cannot instanitiate a new console with a name thats already registered");
+            } else if (element.enabled) {
+                this.Consoles.set(element.name ?? index, new Console(element));
+            }
+        });
+    }
+
+    async runOnAll(toRunFunc) {
+        this.Consoles.forEach(toRunFunc);
+    }
+
+    assert(Statement, ...Message) {
+        if (Statement) {
+            return;
+        } else {
+            this.runOnAll((element) => {
+                element.assert(false, ...Message);
+            });
+        }
+    }
+
+    clear() {
+        this.runOnAll((element) => {
+            element.clear();
+        });
+    }
+    
+    debug(...Message) {
+        this.Console.log(...Message);
+    }
+
+    error(...Message) {
+        this.runOnAll((element) => {
+            element.error(...Message);
         });
     }
 
     log(...Message) {
-        super.log(...Message);
-        this.Consoles.forEach(async (element) => {
+        this.runOnAll((element) => {
             element.log(...Message);
         });
-    }
-
-    debug(...debugArgs) {
-        super.log(...debugArgs);
     }
 }
 
