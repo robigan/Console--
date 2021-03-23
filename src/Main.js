@@ -25,17 +25,17 @@ class Main {
             {
                 stdout: require("fs").createWriteStream(`./logs/${Date.now()}.log`, {flags: "wx"}),
                 name: "fs",
-                enabled: false,
+                enabled: true,
             },
         ],
     }) {
         assertOptions(Options);
         //Options.std ? super(Options.std) : super(process.stdout);
 
-        this.Options = Options;
+        //this.Options = Options;
         this.Console = new Console(Options.std);
         this.Consoles = new Map();
-        this.Kleur = new PromptsCompat(this.Console);
+        this.Prompts = new PromptsCompat(Options.std);
 
         this.Consoles.set(Options.std.name ?? "std", this.Console);
         Options.others.forEach((element, index) => {
@@ -51,7 +51,7 @@ class Main {
         this.Consoles.forEach(toRunFunc);
     }
 
-    assert(Statement, ...Message) {
+    async assert(Statement, ...Message) {
         if (Statement) {
             return;
         } else {
@@ -61,23 +61,23 @@ class Main {
         }
     }
 
-    clear() {
+    async clear() {
         this.runOnAll((element) => {
             element.clear();
         });
     }
     
-    debug(...Message) {
+    async debug(...Message) {
         this.Console.log(...Message);
     }
 
-    error(...Message) {
+    async error(...Message) {
         this.runOnAll((element) => {
             element.error(...Message);
         });
     }
 
-    log(...Message) {
+    async log(...Message) {
         this.runOnAll((element) => {
             element.log(...Message);
         });

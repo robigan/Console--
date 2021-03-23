@@ -1,11 +1,15 @@
 const Prompts = require("prompts");
 const Kleur = require("kleur");
 
-class PromptsCompat extends Prompts {
-    constructor(Std) {
-        super();
-        this.Console = Std;
+class PromptsCompat {
+    constructor(Std = { stdin: process.stdin, stdout: process.stdout }) {
+        this.Std = Std;
+        this.Prompts = Prompts;
+    }
+
+    async Prompt(Questions, Options) {
+        return await Prompts(Object.assign(this.Std, Questions), Options);
     }
 }
 
-module.exports = { KleurCompat };
+module.exports = { PromptsCompat };
