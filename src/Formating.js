@@ -1,7 +1,7 @@
 const Prompts = require("prompts");
 const Kleur = require("kleur");
 
-class PromptsCompat {
+/*class PromptsCompat {
     constructor(Std = { stdin: process.stdin, stdout: process.stdout }) {
         this.Std = Std;
         this.Prompts = Prompts;
@@ -10,6 +10,6 @@ class PromptsCompat {
     async Prompt(Questions, Options) {
         return await Prompts(Object.assign(this.Std, Questions), Options);
     }
-}
+}*/
 
-module.exports = { PromptsCompat };
+module.exports = { Prompts, Kleur };
