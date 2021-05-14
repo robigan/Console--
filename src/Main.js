@@ -53,7 +53,7 @@ class Main {
         Options.get("Kleur") ? this.Kleur = require("kleur") : undefined;
     }
 
-    async runOnAll(toRunFunc) {
+    async _runOnAll(toRunFunc) {
         this.Consoles.forEach(toRunFunc);
     }
 
@@ -61,14 +61,14 @@ class Main {
         if (Statement) {
             return;
         } else {
-            this.runOnAll((element) => {
+            this._runOnAll((element) => {
                 element.assert(false, ...Message);
             });
         }
     }
 
     async clear() {
-        this.runOnAll((element) => {
+        this._runOnAll((element) => {
             element.clear();
         });
     }
@@ -78,13 +78,13 @@ class Main {
     }
 
     async error(...Message) {
-        this.runOnAll((element) => {
+        this._runOnAll((element) => {
             element.error(...Message);
         });
     }
 
     async log(...Message) {
-        this.runOnAll((element) => {
+        this._runOnAll((element) => {
             element.log(...Message);
         });
     }
