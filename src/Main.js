@@ -13,7 +13,7 @@ const assertTerms = (Terms) => {
     });
 };
 
-class Main {
+class Main extends Console {
     constructor(Terms = {
         std: {
             stdout: process.stdout,
@@ -24,18 +24,19 @@ class Main {
             {
                 stdout: require("fs").createWriteStream(`./logs/${Date.now()}.log`, { flags: "wx" }),
                 name: "fs",
-                enabled: true,
+                enabled: false,
             },
         ],
     }, Options = new Map([["Kleur", true], ["Prompts", true]])) {
         assertTerms(Terms);
+        super(Terms.std.stdout, Terms.std.stderr);
         //Terms.std ? super(Terms.std) : super(process.stdout);
 
         //this.Terms = Terms;
-        this.Console = new Console(Terms.std);
+        //this.Console = new Console(Terms.std);
         this.Consoles = new Map();
 
-        this.Consoles.set(Terms.std.name ?? "std", this.Console);
+        //this.Consoles.set(Terms.std.name ?? "std", this.Console);
         Terms.others.forEach((element, index) => {
             if (element.name && this.Consoles.has(element.name)) {
                 throw new SyntaxError("Cannot instanitiate a new console with a name thats already registered");
@@ -54,6 +55,8 @@ class Main {
     }
 
     async _runOnAll(toRunFunc) {
+        //console.log(this.constructor.__proto__);
+        toRunFunc(Object.getPrototypeOf(this.constructor));
         this.Consoles.forEach(toRunFunc);
     }
 
@@ -74,7 +77,8 @@ class Main {
     }
 
     async debug(...Message) {
-        this.Console.log(...Message);
+        //this.Console.log(...Message);
+        super.log(...Message);
     }
 
     async error(...Message) {
