@@ -13,7 +13,7 @@ const assertTerms = (Terms) => {
     });
 };
 
-class Main extends Console {
+class Controller extends Console {
     constructor(Terms = {
         std: {
             stdout: process.stdout,
@@ -94,4 +94,4 @@ class Main extends Console {
     }
 }
 
-module.exports = Main;
+module.exports = Controller;

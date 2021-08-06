@@ -10,9 +10,10 @@
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {
-    "prompts": "^2.4.0"
+    "kleur": "^4.1.4",
+    "prompts": "^2.4.1"
   },
   "devDependencies": {
-    "eslint": "^7.21.0"
+    "eslint": "^7.32.0"
   }
 }
